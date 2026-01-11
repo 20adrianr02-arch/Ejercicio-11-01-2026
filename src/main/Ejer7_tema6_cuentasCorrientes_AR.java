@@ -113,7 +113,9 @@ public class Ejer7_tema6_cuentasCorrientes_AR {
                 codigo = teclado.nextInt();
                 if (codigo > 0 && codigo < 11) { //SI ES MAYOR QUE O Y MENOR QUE 10
                     correcto = true;
-                }else System.out.println("<> Introduce un codigo valido 1-10");
+                } else {
+                    System.out.println("<> Introduce un codigo valido 1-10");
+                }
             } catch (InputMismatchException exc) {
                 teclado.nextLine(); //LIMPIA Y PIDE //
                 System.out.println("<> Introduce un codigo valido");
@@ -137,7 +139,7 @@ public class Ejer7_tema6_cuentasCorrientes_AR {
                 monto = teclado.nextInt();
                 if (monto > 0 && monto < 9999) {
                     correcto = true;
-                }else{
+                } else {
                     System.out.println("Introduce un monto valido 0-9999");
                 }
             } catch (InputMismatchException exc) {
@@ -151,63 +153,85 @@ public class Ejer7_tema6_cuentasCorrientes_AR {
     }
 
     /**
+     * BUSCA CUENTA EN EL ARRAY MEDIENTE SU CODIGO Y DEVUELVE LA CUENTA
+     *
+     * @param codigo EL CODIGO A BUSCAR
+     * @return EL OBJETO DE CUENTA BANCARIA
+     */
+    public static CuentaBancaria buscarCuenta(int codigo) {
+        for (int i = 0; i < arrayCuentas.length; i++) {
+            if (arrayCuentas[i] != null && arrayCuentas[i].getCodigo() == codigo) { //BUSCA QUE SEA DIFERENTE A NULL Y QUE EL CODIGO SEA IGUAL
+                return arrayCuentas[i];
+            }
+        }
+        return null;
+    }
+
+    /**
      * BUSCA EL CODIGO DE LA CUENTA Y REALIZA EL RETIRO
      *
      * @param codigo
      */
-    public static void retiroCuenta(int codigo) {
-        for (int i = 0; i < arrayCuentas.length; i++) {
-            if (arrayCuentas[i].getCodigo() == codigo) {
-                System.out.println("<> Cuenta encontrada");
-                System.out.print("<> Monto a retirar : ");
-                arrayCuentas[i].retirar(pideMonto());
-                System.out.println("Retiro exitoso, saldo actual : " + arrayCuentas[i].getSaldo());
-            }
-        }
+    public static void retiroCuenta() {
+        System.out.print("<> Introduce el código de la cuenta: ");
+        CuentaBancaria cuenta = buscarCuenta(pideCodigo());
 
+        if (cuenta != null) {
+            System.out.println("<> Cuenta encontrada: " + cuenta.getTitular());
+            System.out.print("<> Monto a retirar: ");
+            if (cuenta.retirar(pideMonto())) {
+                System.out.println("Retiro exitoso. Saldo actual: " + cuenta.getSaldo());
+            } else {
+                System.out.println("No se pudo realizar el retiro.");
+            }
+        } else {
+            System.out.println("<> Error: Cuenta no encontrada.");
+        }
     }
 
     /**
-     * BUSCA EL CODIGO DE LA CUENTA Y REALIZA EL DEPOSITO
+     * REALIZA EL DEPOSITO A LA CUENTA SOLICITADA POR SU CODIGO
      *
-     * @param codigo
+     * @param int CODIGO INTRODUCIDO POR EL USU
      */
     public static void depositoCuenta(int codigo) {
-        for (int i = 0; i < arrayCuentas.length; i++) {
-            if (arrayCuentas[i].getCodigo() == codigo) {
-                System.out.println("<> Cuenta encontrada");
-                System.out.print("<> Monto a ingresar : ");
-                arrayCuentas[i].depositar(pideMonto());
-                System.out.println("Ingreso exitoso, saldo actual : " + arrayCuentas[i].getSaldo());
+        System.out.print("<> Introduce el código de la cuenta: ");
+        CuentaBancaria cuenta = buscarCuenta(pideCodigo());
+        
+          if (cuenta != null) {
+            System.out.println("<> Cuenta encontrada: " + cuenta.getTitular());
+            System.out.print("<> Monto a depositar: ");
+            if (cuenta.depositar(pideMonto())) {
+                System.out.println("deposito exitoso. Saldo actual: " + cuenta.getSaldo());
+            } else {
+                System.out.println("No se pudo realizar el deposito.");
             }
+        } else {
+            System.out.println("<> Error: Cuenta no encontrada.");
         }
-
     }
 
+    
+    /**
+     * REALIZA LA TRASNFERENCIA ENTRE CUENTAS, LAS UBICA POR CODIGO Y LUEGO REALIZA LA TRASNFER
+     */
     public static void transferencia() {
-        int codigoOrigen= 0;
-        int codigoDestino = 0;
-        codigoOrigen= pideCodigo();
-        for (int i = 0; i < arrayCuentas.length; i++) { //FOR 1 PARA CUENTA DE ORIGEN
-            if (codigoOrigen == arrayCuentas[i].getCodigo()) {//SI EL CODIGO INTRODUCIDO POR EL USU, ES IGUAL AL CODIGO DE LA CUENTA
-                System.out.println("<> Cuenta Encontrada");
-                System.out.print("<> Introduce el codigo de la cuenta de destino : ");
-                codigoDestino = pideCodigo();
-                for (int j = 0; j < arrayCuentas.length; j++) { //FOR 2 PARA CUENTA DE DESTINO //BUSCA LA CUENTA DE DESTINO MEDIANTE EL CODIGO
-                    if (codigoDestino == arrayCuentas[j].getCodigo()) {
-                        System.out.println("<> Cuenta de destino encontrada");
-                        System.out.print("<> Introduce el  monto de la transferencia : ");//PIDE EL MONTO A TRAMSFERIR
-                        if(arrayCuentas[i].transferir(arrayCuentas[j], pideMonto()) == true){ //RALIZA LA TRAMSFERENCIA CON LA CUENTA DE ORIGEN Y CUENTA DE DESTINO
-                            System.out.println("Transferencia realizada");
-                        }else {
-                            System.out.println("No se ha podido realizar la transferencia ");
-                        }
-                    }
-                }
-                System.out.println("Transferencia realizada con exito, saldo actual :  " + arrayCuentas[i].getSaldo() );
+        System.out.print("<> Código cuenta ORIGEN: ");
+        CuentaBancaria origen = buscarCuenta(pideCodigo()); //BUSCA LA CUENTA DE ORIGEN Y LA ALMACENA
+
+        System.out.print("<> Código cuenta DESTINO: ");
+        CuentaBancaria destino = buscarCuenta(pideCodigo()); //BUSCA LA CUENTA DE DESTINO
+
+        if (origen != null && destino != null) {
+            System.out.print("<> Monto a transferir: ");
+            if (origen.transferir(destino, pideMonto())) {
+                System.out.println("Transferencia realizada con éxito.");
+            } else {
+                System.out.println("La transferencia ha sido rechazada por el sistema.");
             }
+        } else {
+            System.out.println("<> Error: Una o ambas cuentas no existen.");
         }
-        
     }
 
     /**
@@ -232,7 +256,7 @@ public class Ejer7_tema6_cuentasCorrientes_AR {
             case 2 -> {
                 System.out.println("----------RETIRO----------");
                 System.out.print("<> Introduce el codigo de la cuenta : ");
-                retiroCuenta(pideCodigo());
+                retiroCuenta();
                 eleccion = 2;
             }
 
