@@ -47,26 +47,26 @@ public class CuentaAhorro extends CuentaBancaria implements Transaccion { //impl
     }
 
     /**
-     *
+     * REALIZA TRANSFERENCIA ENTRE CUENTAS DE AHORRO
      * @param destino
      * @param cantidad
      * @return
      */
+    @Override
     public boolean transferir(CuentaBancaria destino, double cantidad) {
         boolean realizado = false;
-        if (saldo >= cantidad && destino instanceof CuentaAhorro) { //QUE SALDO SEA MAYOR O IGUAL Y QUE LA CUENTA SEA DE AHORRO GRACIAS A instanceof
-            saldo -= cantidad;
-            realizado = destino.depositar(cantidad);
-            if (!realizado) {
-                this.saldo += cantidad; //SI REALIZADO ES FALSO, REINTEGRA EL DINERO A LA CUENTA
-                realizado = false;
-            }
+        if (destino instanceof CuentaAhorro && saldo >= cantidad) {
+            saldo -= cantidad; 
+            ((CuentaAhorro) destino).sumarSaldo(cantidad);//CASTEO DE CUENTAAHORRO, PARA INFORMALE A JAVA QUE DESTINO ES UNA CUENTA DE AHORRO
+            realizado = true;
+            System.out.println("<> Transferencia interna Ahorro-Ahorro ejecutada.");
         }
+
         return realizado;
     }
 
     public String toString() {
-        return "CuentaAhorro - codigo= " + codigo + "\ntitular= " + titular + "\nsaldo= " + saldo + "\nnumMeses= " + numMeses + "\ntasaIntereses= " +tasaIntereses;
+        return "CuentaAhorro - codigo= " + codigo + "\ntitular= " + titular + "\nsaldo= " + saldo + "\nnumMeses= " + numMeses + "\ntasaIntereses= " + tasaIntereses;
     }
 
     /**

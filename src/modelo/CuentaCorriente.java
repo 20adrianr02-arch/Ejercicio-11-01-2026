@@ -6,7 +6,7 @@ public class CuentaCorriente extends CuentaBancaria implements Transaccion { //E
 
     public CuentaCorriente(int codigo, String titular, double saldo, int limiteRiesgo) {
         super(codigo, titular, saldo);
-        this.limiteRiesgo = limiteRiesgo;
+        this.limiteRiesgo = 250;
     }
 
     /**
@@ -44,29 +44,25 @@ public class CuentaCorriente extends CuentaBancaria implements Transaccion { //E
     }
 
     /**
-     *
+     * REALIZA LA TRANSFERENCIA, ENTRE CUENTAS CORRIENTE
      * @param destino
      * @param cantidad
      * @return
      */
+    @Override
     public boolean transferir(CuentaBancaria destino, double cantidad) {
         boolean realizado = false;
-        if (retirar(cantidad)) {
-            realizado = destino.depositar(cantidad);
-            if (!realizado) {
-                this.saldo += cantidad; // SI REALIZADO ES FALSE, DEVUELVE EL DINERO A LA CUENTA//
-                realizado = false;
-            }
+        if (retirar(cantidad)) { 
+            destino.sumarSaldo(cantidad); 
+            realizado = true;
         }
+
         return realizado;
     }
 
-    
     public String toString() {
-        return "CuentaCorriente - codigo= " + codigo + "\ntitular= "  +  titular + "\nsaldo= " + saldo + "\nlimiteRiesgo= " + limiteRiesgo ;
+        return "CuentaCorriente - codigo= " + codigo + "\ntitular= " + titular + "\nsaldo= " + saldo + "\nlimiteRiesgo= " + limiteRiesgo;
     }
-    
-    
 
     /**
      *
